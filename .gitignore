@@ -1,0 +1,46 @@
+# Environment and secrets (never commit API keys)
+.env
+.env.local
+.env.*.local
+llm-service/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+.uv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+*.egg
+.mypy_cache/
+.ruff_cache/
+
+# Go
+operator/bin/
+operator/operator
+*.test
+vendor/
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Build and artifacts
+dist/
+build/
+*.tgz
+charts/*.tgz
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,16 @@
+LogSage is installed in namespace {{ .Release.Namespace }}.
+
+1. Ensure the LLM service has an API key (if using OpenAI/Gemini):
+   kubectl create secret generic logsage-llm-openai --from-literal=LLM_API_KEY=sk-your-key -n {{ .Release.Namespace }}
+
+   Or set llmService.createSecret=true and llmService.apiKey in values.
+
+2. Check pods:
+   kubectl -n {{ .Release.Namespace }} get pods -l 'app in (logsage-operator,llm-service)'
+
+3. Port-forward to hit the LLM API (health, /analyses, /reports):
+   kubectl -n {{ .Release.Namespace }} port-forward svc/llm-service 8000:8000
+   Then open http://localhost:8000/analyses and http://localhost:8000/reports
+
+4. Create a failing workload to trigger analysis (e.g. in default namespace):
+   kubectl apply -f operator/config/samples/failing-deployment.yaml

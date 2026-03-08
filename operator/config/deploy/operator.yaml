@@ -1,0 +1,45 @@
+# LogSage operator: Deployment, ServiceAccount (RBAC in rbac.yaml, config in configmap.yaml)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logsage
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: logsage-operator
+  namespace: logsage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logsage-operator
+  namespace: logsage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logsage-operator
+  template:
+    metadata:
+      labels:
+        app: logsage-operator
+    spec:
+      serviceAccountName: logsage-operator
+      containers:
+        - name: operator
+          image: logsage-operator:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          envFrom:
+            - configMapRef:
+                name: logsage-operator-config
+          env:
+            - name: LLM_SERVICE_URL
+              value: "http://llm-service.logsage.svc.cluster.local:8000"

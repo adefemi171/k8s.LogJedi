@@ -1,0 +1,68 @@
+# Default values for logsage.
+# Install: helm install logsage ./charts/logsage -n logsage --create-namespace
+# Override: helm install logsage ./charts/logsage -n logsage --create-namespace -f myvalues.yaml
+
+# Namespace to install operator and LLM service into (also used as release namespace when --create-namespace)
+namespace: logsage
+
+# --- Operator ---
+operator:
+  image:
+    repository: logsage-operator
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Operator ConfigMap (env for the operator)
+operatorConfig:
+  # applyMode: auto | manual
+  applyMode: auto
+  # logBackendType: kubernetes | loki | custom_http
+  logBackendType: kubernetes
+  logBackendURL: ""
+  logTailLines: "100"
+  historicalLogSinceMinutes: "60"
+  analyzeCooldownMinutes: "15"
+  dryRunBeforeApply: "false"
+  # Comma-separated; only auto-apply in these namespaces (empty = all). Set e.g. "default" to avoid patching logsage.
+  autoApplyNamespaces: "default"
+  watchNamespaces: ""
+  excludeNamespaces: ""
+  maxRecentLogLines: "0"
+  maxHistoricalLogLines: "0"
+  # Optional: LLM_SERVICE_AUTH_HEADER (e.g. Bearer <token>)
+  llmServiceAuthHeader: ""
+
+# --- LLM Service ---
+llmService:
+  enabled: true
+  image:
+    repository: logsage-llm-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "1000m"
+  # LLM provider: mock | openai | bedrock | gemini (for mock, set existingSecret: "" and omit createSecret)
+  provider: openai
+  # Use existing secret for API key (e.g. logsage-llm-openai). Create with: kubectl create secret generic logsage-llm-openai --from-literal=LLM_API_KEY=sk-...
+  existingSecret: "logsage-llm-openai"
+  existingSecretKey: LLM_API_KEY
+  # If createSecret true, create a secret from apiKey (for dev only; use existingSecret in prod)
+  createSecret: false
+  apiKey: ""
+
+# In-cluster URL for operator -> LLM (default uses release namespace)
+llmServiceUrl: ""  # default in template: http://llm-service.{{ .Release.Namespace }}.svc.cluster.local:8000

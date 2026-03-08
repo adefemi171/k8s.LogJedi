@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: logsage-operator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: logsage-operator
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logsage-operator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: logsage-operator
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.operator.replicaCount }}
+  selector:
+    matchLabels:
+      app: logsage-operator
+  template:
+    metadata:
+      labels:
+        app: logsage-operator
+        app.kubernetes.io/name: logsage-operator
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: logsage-operator
+      containers:
+        - name: operator
+          image: "{{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}"
+          imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.operator.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: logsage-operator-config
+          env:
+            - name: LLM_SERVICE_URL
+              value: {{ default (printf "http://llm-service.%s.svc.cluster.local:8000" .Release.Namespace) .Values.llmServiceUrl | quote }}

@@ -1,0 +1,53 @@
+# Sample failing deployment for testing LogSage.
+# Apply this after the operator and LLM service are running.
+# Expected: operator detects UnavailableReplicas / ImagePullBackOff, calls /analyze, then notifies or auto-applies.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-failing
+  namespace: default
+  labels:
+    app: sample-failing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-failing
+  template:
+    metadata:
+      labels:
+        app: sample-failing
+    spec:
+      containers:
+        - name: app
+          # Invalid image to trigger ImagePullBackOff or ErrImagePull
+          image: example.com/nonexistent:latest
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+---
+# Alternative: CrashLoopBackOff (container exits immediately)
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: sample-crashloop
+#   namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: sample-crashloop
+#   template:
+#     metadata:
+#       labels:
+#         app: sample-crashloop
+#     spec:
+#       containers:
+#         - name: app
+#           image: busybox
+#           command: ["sh", "-c", "exit 1"]

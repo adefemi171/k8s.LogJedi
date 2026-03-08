@@ -1,0 +1,54 @@
+# LLM service deployment - apply from repo root: kubectl apply -f llm-service/deploy/
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: logsage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-service
+  namespace: logsage
+spec:
+  selector:
+    app: llm-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-service
+  namespace: logsage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-service
+  template:
+    metadata:
+      labels:
+        app: llm-service
+    spec:
+      containers:
+        - name: llm-service
+          image: logsage-llm-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
+          env:
+            - name: LLM_PROVIDER
+              value: "openai"
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: logsage-llm-openai
+                  key: LLM_API_KEY

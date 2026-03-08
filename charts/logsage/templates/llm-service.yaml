@@ -1,0 +1,61 @@
+{{- if .Values.llmService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: llm-service
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  selector:
+    app: llm-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: llm-service
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.llmService.replicaCount }}
+  selector:
+    matchLabels:
+      app: llm-service
+  template:
+    metadata:
+      labels:
+        app: llm-service
+        app.kubernetes.io/name: llm-service
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: llm-service
+          image: "{{ .Values.llmService.image.repository }}:{{ .Values.llmService.image.tag }}"
+          imagePullPolicy: {{ .Values.llmService.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          resources:
+            {{- toYaml .Values.llmService.resources | nindent 12 }}
+          env:
+            - name: LLM_PROVIDER
+              value: {{ .Values.llmService.provider | quote }}
+            {{- if .Values.llmService.existingSecret }}
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.llmService.existingSecret }}
+                  key: {{ .Values.llmService.existingSecretKey }}
+            {{- else if .Values.llmService.createSecret }}
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: logsage-llm-openai
+                  key: LLM_API_KEY
+            {{- end }}
+{{- end }}
