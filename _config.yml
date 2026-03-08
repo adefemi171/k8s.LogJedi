@@ -1,0 +1,20 @@
+# Jekyll config for GitHub Pages (k8s LogJedi docs site)
+title: k8s LogJedi
+description: "May the logs be with you. Your AI SRE Jedi that reads failures, writes fixes."
+theme: minima
+
+# Only build the docs site; exclude operator, LLM service, charts, and tooling
+exclude:
+  - operator
+  - llm-service
+  - charts
+  - .git
+  - .github
+  - .golangci.yml
+  - .pre-commit-config.yaml
+  - Makefile
+  - "*.mod"
+  - "*.sum"
+  - Dockerfile
+  - node_modules
+  - vendor
