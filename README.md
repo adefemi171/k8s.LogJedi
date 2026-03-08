@@ -1,5 +1,7 @@
 # k8s LogJedi
 
+![K8s LogJedi](images/k8s_jedi.png)
+
 **May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
 
 [**GitHub**](https://github.com/adefemi171/k8s.LogJedi)

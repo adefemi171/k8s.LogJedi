@@ -1,4 +1,10 @@
-# Deploy docs to GitHub Pages (optional: enable in repo Settings > Pages).
+# Deploy docs to GitHub Pages.
+#
+# REQUIRED (one-time): Enable Pages and set source to GitHub Actions, or this workflow will fail with:
+#   "Get Pages site failed. Please verify that the repository has Pages enabled and configured to build using GitHub Actions"
+# Steps: Repo → Settings → Pages → Build and deployment → Source: "GitHub Actions"
+# Docs: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+#
 name: Deploy to GitHub Pages
 
 on:
