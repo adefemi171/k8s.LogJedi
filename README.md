@@ -1,14 +1,18 @@
 # k8s LogJedi
 
-![K8s LogJedi](images/k8s_jedi.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/k8s_jedi.png" width="600px">
+  <img alt="k8s LogJedi – May the logs be with you" src="./images/k8s_jedi.png" width="600px">
+</picture>
+<br/>
 
-[![code size](https://img.shields.io/github/languages/code-size/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi)
-[![build](https://img.shields.io/github/actions/workflow/status/adefemi171/k8s.LogJedi/ci.yml?branch=main&label=build)](https://github.com/adefemi171/k8s.LogJedi/actions)
-[![release](https://img.shields.io/github/v/release/adefemi171/k8s.LogJedi?include_prereleases&sort=semver&label=release)](https://github.com/adefemi171/k8s.LogJedi/releases)
-[![docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://adefemi171.github.io/k8s.LogJedi/)
-[![License](https://img.shields.io/github/license/adefemi171/k8s.LogJedi)](LICENSE)
-[![Go](https://img.shields.io/github/go-mod/go-version/adefemi171/k8s.LogJedi/main?filename=operator%2Fgo.mod&label=Go)](https://go.dev/)
-[![last commit](https://img.shields.io/github/last-commit/adefemi171/k8s.LogJedi/main)](https://github.com/adefemi171/k8s.LogJedi/commits/main)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/adefemi171/k8s.LogJedi)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/adefemi171/k8s.LogJedi/ci.yml?branch=main)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/adefemi171/k8s.LogJedi?include_prereleases&sort=semver)
+[![Link to documentation](https://img.shields.io/static/v1?label=%F0%9F%93%96&message=Documentation&color=blue)](https://adefemi171.github.io/k8s.LogJedi/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Go version](https://img.shields.io/github/go-mod/go-version/adefemi171/k8s.LogJedi/main?filename=operator%2Fgo.mod)](https://github.com/adefemi171/k8s.LogJedi)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/adefemi171/k8s.LogJedi/main)
 
 **May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
 
