@@ -1,7 +1,10 @@
 # Jekyll config for GitHub Pages (k8s LogJedi docs site)
+# For project Pages (https://adefemi171.github.io/k8s.LogJedi/) the site is served under /k8s.LogJedi/
 title: k8s LogJedi
 description: "May the logs be with you. Your AI SRE Jedi that reads failures, writes fixes."
 theme: minima
+url: "https://adefemi171.github.io"
+baseurl: "/k8s.LogJedi"
 
 # Only build the docs site; exclude operator, LLM service, charts, and tooling
 exclude:
