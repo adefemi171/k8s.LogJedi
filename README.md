@@ -4,11 +4,11 @@
 
 [![code size](https://img.shields.io/github/languages/code-size/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi)
 [![build](https://img.shields.io/github/actions/workflow/status/adefemi171/k8s.LogJedi/ci.yml?branch=main&label=build)](https://github.com/adefemi171/k8s.LogJedi/actions)
-[![release](https://img.shields.io/github/v/release/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi/releases)
+[![release](https://img.shields.io/github/v/release/adefemi171/k8s.LogJedi?include_prereleases&sort=semver&label=release)](https://github.com/adefemi171/k8s.LogJedi/releases)
 [![docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://adefemi171.github.io/k8s.LogJedi/)
 [![License](https://img.shields.io/github/license/adefemi171/k8s.LogJedi)](LICENSE)
-[![Go](https://img.shields.io/github/go-mod/go-version/adefemi171/k8s.LogJedi?directory=operator&label=Go)](https://go.dev/)
-[![last commit](https://img.shields.io/github/last-commit/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi/commits/main)
+[![Go](https://img.shields.io/github/go-mod/go-version/adefemi171/k8s.LogJedi/main?filename=operator%2Fgo.mod&label=Go)](https://go.dev/)
+[![last commit](https://img.shields.io/github/last-commit/adefemi171/k8s.LogJedi/main)](https://github.com/adefemi171/k8s.LogJedi/commits/main)
 
 **May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
 
