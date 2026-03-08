@@ -20,7 +20,7 @@ jobs:
           cd operator
           go vet ./...
           go test ./...
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v7
       - name: LLM service test
         run: |
           cd llm-service
