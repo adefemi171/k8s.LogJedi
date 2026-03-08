@@ -26,7 +26,7 @@ func NewSlackNotifier(webhookURL string) *SlackNotifier {
 // SendIssue posts a formatted message to Slack (markdown-style in text block).
 func (s *SlackNotifier) SendIssue(ctx context.Context, issue IssuePayload) error {
 	text := fmt.Sprintf(
-		"*LogSage: %s %s/%s*\n"+
+		"*k8s LogJedi: %s %s/%s*\n"+
 			"Reason: %s\n"+
 			"*Summary:* %s\n"+
 			"*Root cause:* %s\n"+

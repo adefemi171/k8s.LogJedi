@@ -1,6 +1,6 @@
-# LogSage project context
+# k8s LogJedi project context
 
-- **What it is:** LogSage is an AI-native Kubernetes sidekick that watches pods, reads logs, and turns failures into clear fixes before they become outages. Mono-repo: Go operator (controller-runtime) + Python FastAPI LLM service (Strands).
+- **What it is:** k8s LogJedi is an AI-native Kubernetes sidekick. May the logs be with you. Your AI SRE Jedi that reads failures, writes fixes. Mono-repo: Go operator (controller-runtime) + Python FastAPI LLM service (Strands).
 - **Operator:** Go 1.21+, `operator/` — controllers, internal (logbackend, llmclient, notifier, redact, patch), config/deploy. Prefer standard controller-runtime patterns; keep RBAC and deploy YAML in sync with code.
 - **LLM service:** Python 3.14+, `llm-service/` — FastAPI, Pydantic, Strands. Use **uv** for install and run (`uv sync`, `uv run ...`). Config from `config.py` and `.env` (python-dotenv). Providers: mock, openai, bedrock, gemini via `LLM_PROVIDER`.
 - **Conventions:** When changing deploy manifests or config options, update README and ROADMAP if relevant. Keep ADRs in `docs/adr/` for architectural decisions. Run `make test` before committing.

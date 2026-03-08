@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: logsage-operator-config
+  name: logjedi-operator-config
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: logsage-operator
+    app.kubernetes.io/name: logjedi-operator
     app.kubernetes.io/instance: {{ .Release.Name }}
 data:
   APPLY_MODE: {{ .Values.operatorConfig.applyMode | quote }}

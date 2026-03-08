@@ -1,7 +1,7 @@
 [project]
 name = "llm-service"
 version = "0.1.0"
-description = "LogSage LLM analysis service: an AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages. FastAPI + Strands."
+description = "k8s LogJedi LLM analysis service: May the logs be with you. Your AI SRE Jedi that reads failures, writes fixes. FastAPI + Strands."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -13,10 +13,10 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/adefemi171/LogSage"
+Repository = "https://github.com/adefemi171/k8s.LogJedi"
 
 [project.optional-dependencies]
-dev = ["pytest", "httpx"]
+dev = ["pytest", "httpx", "ruff"]
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -25,3 +25,12 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["llm_service*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+exclude = [".venv", "__pycache__", "build"]
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I"]
+ignore = ["E501"]

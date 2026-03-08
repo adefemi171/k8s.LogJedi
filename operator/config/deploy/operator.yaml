@@ -1,34 +1,34 @@
-# LogSage operator: Deployment, ServiceAccount (RBAC in rbac.yaml, config in configmap.yaml)
+# k8s LogJedi operator: Deployment, ServiceAccount (RBAC in rbac.yaml, config in configmap.yaml)
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: logsage
+  name: logjedi
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: logsage-operator
-  namespace: logsage
+  name: logjedi-operator
+  namespace: logjedi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: logsage-operator
-  namespace: logsage
+  name: logjedi-operator
+  namespace: logjedi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: logsage-operator
+      app: logjedi-operator
   template:
     metadata:
       labels:
-        app: logsage-operator
+        app: logjedi-operator
     spec:
-      serviceAccountName: logsage-operator
+      serviceAccountName: logjedi-operator
       containers:
         - name: operator
-          image: logsage-operator:latest
+          image: logjedi-operator:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -39,7 +39,7 @@ spec:
               cpu: "500m"
           envFrom:
             - configMapRef:
-                name: logsage-operator-config
+                name: logjedi-operator-config
           env:
             - name: LLM_SERVICE_URL
-              value: "http://llm-service.logsage.svc.cluster.local:8000"
+              value: "http://llm-service.logjedi.svc.cluster.local:8000"

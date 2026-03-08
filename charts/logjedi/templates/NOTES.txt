@@ -1,12 +1,12 @@
-LogSage is installed in namespace {{ .Release.Namespace }}.
+k8s LogJedi is installed in namespace {{ .Release.Namespace }}.
 
 1. Ensure the LLM service has an API key (if using OpenAI/Gemini):
-   kubectl create secret generic logsage-llm-openai --from-literal=LLM_API_KEY=sk-your-key -n {{ .Release.Namespace }}
+   kubectl create secret generic logjedi-llm-openai --from-literal=LLM_API_KEY=sk-your-key -n {{ .Release.Namespace }}
 
    Or set llmService.createSecret=true and llmService.apiKey in values.
 
 2. Check pods:
-   kubectl -n {{ .Release.Namespace }} get pods -l 'app in (logsage-operator,llm-service)'
+   kubectl -n {{ .Release.Namespace }} get pods -l 'app in (logjedi-operator,llm-service)'
 
 3. Port-forward to hit the LLM API (health, /analyses, /reports):
    kubectl -n {{ .Release.Namespace }} port-forward svc/llm-service 8000:8000

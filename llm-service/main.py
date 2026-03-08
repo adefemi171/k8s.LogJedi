@@ -1,4 +1,4 @@
-"""FastAPI application for LogSage LLM analysis service."""
+"""FastAPI application for k8s LogJedi LLM analysis service."""
 
 from contextlib import asynccontextmanager
 
@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="LogSage LLM Service",
+    title="k8s LogJedi LLM Service",
     description="Analyzes failed Kubernetes workloads and returns explanations and optional patches.",
     version="0.1.0",
     lifespan=lifespan,

@@ -1,9 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: logsage-operator
+  name: logjedi-operator
   labels:
-    app.kubernetes.io/name: logsage-operator
+    app.kubernetes.io/name: logjedi-operator
     app.kubernetes.io/instance: {{ .Release.Name }}
 rules:
   - apiGroups: [""]
@@ -19,15 +19,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: logsage-operator
+  name: logjedi-operator
   labels:
-    app.kubernetes.io/name: logsage-operator
+    app.kubernetes.io/name: logjedi-operator
     app.kubernetes.io/instance: {{ .Release.Name }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: logsage-operator
+  name: logjedi-operator
 subjects:
   - kind: ServiceAccount
-    name: logsage-operator
+    name: logjedi-operator
     namespace: {{ .Release.Namespace }}

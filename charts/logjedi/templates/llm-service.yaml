@@ -55,7 +55,7 @@ spec:
             - name: LLM_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: logsage-llm-openai
+                  name: logjedi-llm-openai
                   key: LLM_API_KEY
             {{- end }}
 {{- end }}

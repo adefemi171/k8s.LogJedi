@@ -1,0 +1,15 @@
+apiVersion: v2
+name: logjedi
+description: k8s LogJedi - May the logs be with you. Your AI SRE Jedi that reads failures, writes fixes.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - operator
+  - llm
+  - remediation
+home: https://github.com/adefemi171/k8s.LogJedi
+sources:
+  - https://github.com/adefemi171/k8s.LogJedi
+maintainers: []

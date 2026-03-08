@@ -1,14 +1,14 @@
-# Default values for logsage.
-# Install: helm install logsage ./charts/logsage -n logsage --create-namespace
-# Override: helm install logsage ./charts/logsage -n logsage --create-namespace -f myvalues.yaml
+# Default values for k8s LogJedi.
+# Install: helm install logjedi ./charts/logjedi -n logjedi --create-namespace
+# Override: helm install logjedi ./charts/logjedi -n logjedi --create-namespace -f myvalues.yaml
 
 # Namespace to install operator and LLM service into (also used as release namespace when --create-namespace)
-namespace: logsage
+namespace: logjedi
 
 # --- Operator ---
 operator:
   image:
-    repository: logsage-operator
+    repository: logjedi-operator
     tag: latest
     pullPolicy: IfNotPresent
   replicaCount: 1
@@ -31,7 +31,7 @@ operatorConfig:
   historicalLogSinceMinutes: "60"
   analyzeCooldownMinutes: "15"
   dryRunBeforeApply: "false"
-  # Comma-separated; only auto-apply in these namespaces (empty = all). Set e.g. "default" to avoid patching logsage.
+  # Comma-separated; only auto-apply in these namespaces (empty = all). Set e.g. "default" to avoid patching logjedi.
   autoApplyNamespaces: "default"
   watchNamespaces: ""
   excludeNamespaces: ""
@@ -44,7 +44,7 @@ operatorConfig:
 llmService:
   enabled: true
   image:
-    repository: logsage-llm-service
+    repository: logjedi-llm-service
     tag: latest
     pullPolicy: IfNotPresent
   replicaCount: 1
@@ -57,8 +57,8 @@ llmService:
       cpu: "1000m"
   # LLM provider: mock | openai | bedrock | gemini (for mock, set existingSecret: "" and omit createSecret)
   provider: openai
-  # Use existing secret for API key (e.g. logsage-llm-openai). Create with: kubectl create secret generic logsage-llm-openai --from-literal=LLM_API_KEY=sk-...
-  existingSecret: "logsage-llm-openai"
+  # Use existing secret for API key (e.g. logjedi-llm-openai). Create with: kubectl create secret generic logjedi-llm-openai --from-literal=LLM_API_KEY=sk-...
+  existingSecret: "logjedi-llm-openai"
   existingSecretKey: LLM_API_KEY
   # If createSecret true, create a secret from apiKey (for dev only; use existingSecret in prod)
   createSecret: false

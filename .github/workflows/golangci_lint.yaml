@@ -1,0 +1,23 @@
+name: Run golangci-lint
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "operator/**/*.go"
+      - "go.mod"
+      - "go.sum"
+
+jobs:
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v2.0.0
+          working-directory: operator
+          args: --timeout=5m

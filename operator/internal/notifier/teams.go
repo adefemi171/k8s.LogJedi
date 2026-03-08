@@ -37,8 +37,8 @@ func (t *TeamsNotifier) SendIssue(ctx context.Context, issue IssuePayload) error
 	body := map[string]interface{}{
 		"@type":    "MessageCard",
 		"@context": "https://schema.org/extensions",
-		"summary":  "LogSage: " + issue.ResourceKind + " " + issue.Namespace + "/" + issue.ResourceName,
-		"title":    "LogSage: " + issue.ResourceKind + " " + issue.Namespace + "/" + issue.ResourceName,
+		"summary":  "k8s LogJedi: " + issue.ResourceKind + " " + issue.Namespace + "/" + issue.ResourceName,
+		"title":    "k8s LogJedi: " + issue.ResourceKind + " " + issue.Namespace + "/" + issue.ResourceName,
 		"text":     text,
 	}
 	raw, err := json.Marshal(body)

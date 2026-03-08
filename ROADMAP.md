@@ -1,8 +1,8 @@
-# LogSage Roadmap
+# k8s LogJedi Roadmap
 
-**An AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages.**
+**May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
 
-This document outlines the current state of LogSage and planned improvements. It is intended for contributors and operators who want to extend or adopt the system.
+This document outlines the current state of k8s LogJedi and planned improvements. It is intended for contributors and operators who want to extend or adopt the system.
 
 ---
 
@@ -91,7 +91,7 @@ The following is implemented and usable today:
 
 | Area | Description |
 |------|-------------|
-| **Helm chart** | Add a Helm chart (e.g. `charts/logsage/`) that deploys both the operator and the LLM service with a single `helm install`. Expose key options as values: namespace, image tags, `LLM_SERVICE_URL`, Slack/Teams webhooks, `APPLY_MODE`, namespace filters, cooldown, log backend, etc. Enables one-command install and easier upgrades. |
+| **Helm chart** | Add a Helm chart (e.g. `charts/logjedi/`) that deploys both the operator and the LLM service with a single `helm install`. Expose key options as values: namespace, image tags, `LLM_SERVICE_URL`, Slack/Teams webhooks, `APPLY_MODE`, namespace filters, cooldown, log backend, etc. Enables one-command install and easier upgrades. |
 
 ---
 
@@ -99,7 +99,7 @@ The following is implemented and usable today:
 
 | Area | Description |
 |------|-------------|
-| **LogSageAnalysis CRD** | Store analysis results in a custom resource for audit and UI; optional controller to sync from CR to Slack/Teams or apply. |
+| **LogJediAnalysis CRD** | Store analysis results in a custom resource for audit and UI; optional controller to sync from CR to Slack/Teams or apply. |
 | **Multi-cluster** | Operator that can target multiple clusters and a single LLM service. |
 | **Web UI** | Dashboard to list analyses, view proposed patches, approve/reject. |
 | **Additional actions** | Beyond `k8s_patch`: e.g. full manifest, scaling, or script (with strong safety and review). |

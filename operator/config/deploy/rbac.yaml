@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: logsage-operator
+  name: logjedi-operator
 rules:
   - apiGroups: [""]
     resources: ["pods", "pods/log", "events"]
@@ -17,12 +17,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: logsage-operator
+  name: logjedi-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: logsage-operator
+  name: logjedi-operator
 subjects:
   - kind: ServiceAccount
-    name: logsage-operator
-    namespace: logsage
+    name: logjedi-operator
+    namespace: logjedi

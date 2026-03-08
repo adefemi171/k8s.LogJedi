@@ -11,8 +11,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	"github.com/adefemi171/LogSage/operator/controllers"
-	"github.com/adefemi171/LogSage/operator/internal/config"
+	"github.com/adefemi171/k8s.LogJedi/operator/controllers"
+	"github.com/adefemi171/k8s.LogJedi/operator/internal/config"
 )
 
 var (

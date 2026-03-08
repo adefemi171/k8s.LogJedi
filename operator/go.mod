@@ -1,4 +1,4 @@
-module github.com/adefemi171/LogSage/operator
+module github.com/adefemi171/k8s.LogJedi/operator
 
 go 1.21
 

@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: logsage-operator-config
-  namespace: logsage
+  name: logjedi-operator-config
+  namespace: logjedi
 data:
   APPLY_MODE: "auto"
   LOG_BACKEND_TYPE: "kubernetes"
@@ -10,7 +10,7 @@ data:
   HISTORICAL_LOG_SINCE_MINUTES: "60"
   ANALYZE_COOLDOWN_MINUTES: "15"
   DRY_RUN_BEFORE_APPLY: "false"
-  # Only auto-apply in these namespaces (empty = all). Set to exclude logsage so we never patch the operator or LLM service.
+  # Only auto-apply in these namespaces (empty = all). Set to exclude logjedi so we never patch the operator or LLM service.
   AUTO_APPLY_NAMESPACES: "default"
   # Optional: WATCH_NAMESPACES, EXCLUDE_NAMESPACES (comma-separated)
   # Optional: MAX_RECENT_LOG_LINES, MAX_HISTORICAL_LOG_LINES (0 = no cap)

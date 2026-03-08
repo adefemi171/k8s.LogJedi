@@ -1,0 +1,29 @@
+# Pre-commit hooks for k8s LogJedi
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.0
+    hooks:
+      - id: ruff
+        name: ruff (llm-service)
+        args: [--config, llm-service/pyproject.toml]
+        files: ^llm-service/.*\.py$
+      - id: ruff-format
+        name: ruff format (llm-service)
+        args: [--config, llm-service/pyproject.toml]
+        files: ^llm-service/.*\.py$
+
+  - repo: local
+    hooks:
+      - id: go-fmt
+        name: go fmt (operator)
+        entry: bash -c 'cd operator && go fmt ./...'
+        language: system
+        files: ^operator/.*\.go$
+      - id: go-vet
+        name: go vet (operator)
+        entry: bash -c 'cd operator && go vet ./...'
+        language: system
+        files: ^operator/.*\.go$

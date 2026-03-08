@@ -1,4 +1,4 @@
-# Sample failing deployment for testing LogSage.
+# Sample failing deployment for testing k8s LogJedi.
 # Apply this after the operator and LLM service are running.
 # Expected: operator detects UnavailableReplicas / ImagePullBackOff, calls /analyze, then notifies or auto-applies.
 apiVersion: apps/v1

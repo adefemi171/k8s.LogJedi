@@ -1,6 +1,6 @@
-# LogSage Runbook
+# k8s LogJedi Runbook
 
-LogSage is an AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages. This runbook gives short procedures for common operational issues. See also [README.md](README.md) and [ROADMAP.md](ROADMAP.md).
+k8s LogJedi is an AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages. This runbook gives short procedures for common operational issues. See also [README.md](README.md) and [ROADMAP.md](ROADMAP.md).
 
 ---
 
@@ -10,13 +10,13 @@ LogSage is an AI-native Kubernetes sidekick that watches your pods, reads the lo
 
 **Checks:**
 
-1. **Operator running:** `kubectl -n logsage get pods -l app=logsage-operator` — pod should be Running.
-2. **RBAC:** Operator needs get/list on pods, pods/log, events; get/list/patch on deployments, jobs. Check ClusterRole and ClusterRoleBinding: `kubectl get clusterrole logsage-operator -o yaml`.
-3. **Namespace filter:** If `WATCH_NAMESPACES` or `EXCLUDE_NAMESPACES` is set, the failing resource’s namespace might be excluded. Check ConfigMap `logsage-operator-config` and env vars.
+1. **Operator running:** `kubectl -n logjedi get pods -l app=logjedi-operator` — pod should be Running.
+2. **RBAC:** Operator needs get/list on pods, pods/log, events; get/list/patch on deployments, jobs. Check ClusterRole and ClusterRoleBinding: `kubectl get clusterrole logjedi-operator -o yaml`.
+3. **Namespace filter:** If `WATCH_NAMESPACES` or `EXCLUDE_NAMESPACES` is set, the failing resource’s namespace might be excluded. Check ConfigMap `logjedi-operator-config` and env vars.
 4. **Cooldown:** If the same resource was analyzed recently, the operator skips until `ANALYZE_COOLDOWN_MINUTES` has passed. Check operator logs for "RequeueAfter" or wait for cooldown to expire.
-5. **Logs:** `kubectl -n logsage logs -l app=logsage-operator --tail=200` and look for errors (e.g. "LLM analyze failed", "list events", "get pod logs").
+5. **Logs:** `kubectl -n logjedi logs -l app=logjedi-operator --tail=200` and look for errors (e.g. "LLM analyze failed", "list events", "get pod logs").
 
-**Actions:** Fix RBAC or namespace config; ensure LLM service is reachable (see below); restart operator if needed: `kubectl -n logsage rollout restart deployment/logsage-operator`.
+**Actions:** Fix RBAC or namespace config; ensure LLM service is reachable (see below); restart operator if needed: `kubectl -n logjedi rollout restart deployment/logjedi-operator`.
 
 ---
 
@@ -40,7 +40,7 @@ LogSage is an AI-native Kubernetes sidekick that watches your pods, reads the lo
 
 **Checks:**
 
-1. **Webhook URL:** Ensure `SLACK_WEBHOOK_URL` or `TEAMS_WEBHOOK_URL` is set in the operator ConfigMap/env. `kubectl -n logsage get configmap logsage-operator-config -o yaml`.
+1. **Webhook URL:** Ensure `SLACK_WEBHOOK_URL` or `TEAMS_WEBHOOK_URL` is set in the operator ConfigMap/env. `kubectl -n logjedi get configmap logjedi-operator-config -o yaml`.
 2. **APPLY_MODE:** Notifications are sent in `manual` mode, or in `auto` mode after applying (if notifiers are configured). In `auto` with no notifiers, only audit logs are written.
 3. **Errors in logs:** Look for "send notification failed" in operator logs. That usually means the webhook returned non-2xx or network error.
 4. **Webhook validity:** Test the webhook manually (e.g. `curl -X POST -H 'Content-Type: application/json' -d '{"text":"test"}' <SLACK_WEBHOOK_URL>`). For Teams, ensure the URL is an incoming webhook URL.
@@ -55,10 +55,10 @@ LogSage is an AI-native Kubernetes sidekick that watches your pods, reads the lo
 
 **Checks:**
 
-1. **Service and pod:** `kubectl -n logsage get svc llm-service` and `kubectl -n logsage get pods -l app=llm-service`. Pod should be Running; service should target the pod.
-2. **URL:** Operator must use in-cluster URL when both run in the same cluster, e.g. `http://llm-service.logsage.svc.cluster.local:8000`. Check `LLM_SERVICE_URL` in operator deployment.
+1. **Service and pod:** `kubectl -n logjedi get svc llm-service` and `kubectl -n logjedi get pods -l app=llm-service`. Pod should be Running; service should target the pod.
+2. **URL:** Operator must use in-cluster URL when both run in the same cluster, e.g. `http://llm-service.logjedi.svc.cluster.local:8000`. Check `LLM_SERVICE_URL` in operator deployment.
 3. **Network policy:** If cluster uses network policies, allow traffic from operator pod(s) to LLM service on port 8000.
-4. **Health:** From a pod in the cluster, `curl http://llm-service.logsage.svc.cluster.local:8000/health`. Should return `{"status":"ok"}`.
+4. **Health:** From a pod in the cluster, `curl http://llm-service.logjedi.svc.cluster.local:8000/health`. Should return `{"status":"ok"}`.
 
 **Actions:** Fix service/deployment; correct LLM_SERVICE_URL; relax or add network policy; ensure LLM service has resources and is not OOMKilled (check `kubectl describe pod`).
 

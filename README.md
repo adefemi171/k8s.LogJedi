@@ -1,10 +1,10 @@
-# LogSage
+# k8s LogJedi
 
-**An AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages.**
+**May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
 
-[**GitHub**](https://github.com/adefemi171/LogSage)
+[**GitHub**](https://github.com/adefemi171/k8s.LogJedi)
 
-A production-ready operator that detects failed workloads, collects logs and events, and talks to a Python FastAPI + Strands LLM service for analysis and optional remediation (Slack/Teams notification, auto or manual apply).
+An AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages. A production-ready operator that detects failed workloads, collects logs and events, and talks to a Python FastAPI + Strands LLM service for analysis and optional remediation (Slack/Teams notification, auto or manual apply).
 
 **Current features:** Multi-LLM support (mock, OpenAI, Bedrock, Gemini) with `.env` loading; health/ready and OpenAPI; per-resource cooldown and dry-run before apply; log and namespace filters; operator–LLM auth; audit logging; secret redaction; resource limits; runbook and ADRs. See [ROADMAP.md](ROADMAP.md) for the full list and planned work.
 
@@ -21,8 +21,8 @@ A production-ready operator that detects failed workloads, collects logs and eve
 
 **kind:**
 ```bash
-kind create cluster --name logsage
-kubectl cluster-info --context kind-logsage
+kind create cluster --name logjedi
+kubectl cluster-info --context kind-logjedi
 ```
 
 **minikube:**
@@ -36,8 +36,8 @@ kubectl config use-context minikube
 ```bash
 make docker-build
 # For kind, load images into the cluster:
-kind load docker-image logsage-llm-service:latest --name logsage
-kind load docker-image logsage-operator:latest --name logsage
+kind load docker-image logjedi-llm-service:latest --name logjedi
+kind load docker-image logjedi-operator:latest --name logjedi
 ```
 
 For minikube, you can use the same images with `eval $(minikube docker-env)` before `make docker-build`, or use a registry.
@@ -50,7 +50,7 @@ kubectl apply -f llm-service/deploy/
 
 Wait until the LLM service pod is ready:
 ```bash
-kubectl -n logsage get pods -l app=llm-service
+kubectl -n logjedi get pods -l app=llm-service
 ```
 
 ### 4. Deploy the operator
@@ -62,8 +62,8 @@ kubectl apply -f operator/config/deploy/
 
 Check the operator is running:
 ```bash
-kubectl -n logsage get pods -l app=logsage-operator
-kubectl -n logsage logs -l app=logsage-operator -f
+kubectl -n logjedi get pods -l app=logjedi-operator
+kubectl -n logjedi logs -l app=logjedi-operator -f
 ```
 
 ### 5. Create a sample failing deployment
@@ -80,7 +80,7 @@ This creates a Deployment in `default` with an invalid image (`example.com/nonex
    - Collects Kubernetes Events for that resource
    - Fetches recent pod logs from the API
    - Optionally fetches historical logs from the configured log backend
-   - Redacts secrets from the spec and POSTs to `http://llm-service.logsage.svc.cluster.local:8000/analyze`
+   - Redacts secrets from the spec and POSTs to `http://llm-service.logjedi.svc.cluster.local:8000/analyze`
 
 2. The LLM service returns a JSON response with `summary`, `root_cause`, `recommendation`, and optionally an `action` (e.g. `k8s_patch`).
 
@@ -96,23 +96,23 @@ Use this to get the application running and confirm the LLM analysis and (option
 
 ### 1. Cluster and images
 
-- Start a cluster (e.g. `kind create cluster --name logsage` or `minikube start`).
+- Start a cluster (e.g. `kind create cluster --name logjedi` or `minikube start`).
 - Build and load images:
   - `make docker-build`
-  - kind: `kind load docker-image logsage-llm-service:latest --name logsage` and same for `logsage-operator:latest`.
+  - kind: `kind load docker-image logjedi-llm-service:latest --name logjedi` and same for `logjedi-operator:latest`.
   - minikube: `eval $(minikube docker-env)` then `make docker-build`.
 
 ### 2. Deploy LLM service
 
 ```bash
 kubectl apply -f llm-service/deploy/
-kubectl -n logsage get pods -l app=llm-service   # wait until Ready
+kubectl -n logjedi get pods -l app=llm-service   # wait until Ready
 ```
 
 For a real LLM (e.g. OpenAI), create a Secret and point the deployment at it:
 
 ```bash
-kubectl -n logsage create secret generic logsage-llm-openai --from-literal=LLM_API_KEY=sk-your-key
+kubectl -n logjedi create secret generic logjedi-llm-openai --from-literal=LLM_API_KEY=sk-your-key
 ```
 
 The LLM service deployment in `llm-service/deploy/deployment.yaml` already uses `LLM_PROVIDER=openai` and `valueFrom.secretKeyRef` for `LLM_API_KEY`. If you use mock, you can leave the secret missing and set `LLM_PROVIDER=mock` in the deployment env.
@@ -123,13 +123,13 @@ The LLM service deployment in `llm-service/deploy/deployment.yaml` already uses 
 kubectl apply -f operator/config/deploy/
 ```
 
-This applies namespace, ServiceAccount, ConfigMap, RBAC, and operator Deployment. Check the operator ConfigMap (`operator/config/deploy/configmap.yaml`): set `APPLY_MODE=auto` and `AUTO_APPLY_NAMESPACES: "default"` so auto-apply only runs in `default` (not in `logsage`).
+This applies namespace, ServiceAccount, ConfigMap, RBAC, and operator Deployment. Check the operator ConfigMap (`operator/config/deploy/configmap.yaml`): set `APPLY_MODE=auto` and `AUTO_APPLY_NAMESPACES: "default"` so auto-apply only runs in `default` (not in `logjedi`).
 
 Verify:
 
 ```bash
-kubectl -n logsage get pods -l app=logsage-operator
-kubectl -n logsage logs -l app=logsage-operator -f
+kubectl -n logjedi get pods -l app=logjedi-operator
+kubectl -n logjedi logs -l app=logjedi-operator -f
 ```
 
 ### 4. Trigger a failure and watch the flow
@@ -148,7 +148,7 @@ kubectl apply -f operator/config/samples/failing-deployment.yaml
 Port-forward and call the APIs:
 
 ```bash
-kubectl -n logsage port-forward svc/llm-service 8000:8000
+kubectl -n logjedi port-forward svc/llm-service 8000:8000
 ```
 
 Then:
@@ -168,7 +168,7 @@ Instead of raw manifests, you can install with Helm for parameterized config (na
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `LLM_SERVICE_URL` | Base URL of the LLM service | `http://llm-service:8000` (in-cluster: `http://llm-service.logsage.svc.cluster.local:8000`) |
+| `LLM_SERVICE_URL` | Base URL of the LLM service | `http://llm-service:8000` (in-cluster: `http://llm-service.logjedi.svc.cluster.local:8000`) |
 | `LOG_BACKEND_TYPE` | `kubernetes`, `loki`, or `custom_http` | `kubernetes` |
 | `LOG_BACKEND_URL` | URL for HTTP log backend (for Loki/custom_http) | - |
 | `APPLY_MODE` | `auto` or `manual` | `manual` |
@@ -186,7 +186,7 @@ Instead of raw manifests, you can install with Helm for parameterized config (na
 | `AUTO_APPLY_NAMESPACES` (operator) | When auto, only apply in these namespaces (empty = all) | - |
 | `LLM_SERVICE_AUTH_HEADER` (operator) | Optional Authorization header for operator→LLM (e.g. Bearer token) | - |
 
-ConfigMap `logsage-operator-config` in namespace `logsage` can override these for the operator; set env vars on the LLM service deployment for the Python service.
+ConfigMap `logjedi-operator-config` in namespace `logjedi` can override these for the operator; set env vars on the LLM service deployment for the Python service.
 
 ### LLM service: .env and providers
 
@@ -209,36 +209,36 @@ See [docs/adr/](docs/adr/) for architecture decision records (e.g. operator/LLM 
 
 ## Helm chart
 
-A Helm chart under `charts/logsage/` installs the operator and LLM service with one release. You can override namespace, apply mode, log backend type, auto-apply namespaces, and other options without editing YAML.
+A Helm chart under `charts/logjedi/` installs the operator and LLM service with one release. You can override namespace, apply mode, log backend type, auto-apply namespaces, and other options without editing YAML.
 
 **Install (create namespace if needed):**
 ```bash
-helm install logsage ./charts/logsage -n logsage --create-namespace
+helm install logjedi ./charts/logjedi -n logjedi --create-namespace
 ```
 
 **Override values (examples):**
 ```bash
 # Install into a custom namespace with auto-apply only in default
-helm install logsage ./charts/logsage -n my-ns --create-namespace \
+helm install logjedi ./charts/logjedi -n my-ns --create-namespace \
   --set operatorConfig.applyMode=auto \
   --set operatorConfig.autoApplyNamespaces=default
 
 # Use Loki log backend and manual apply
-helm install logsage ./charts/logsage -n logsage --create-namespace \
+helm install logjedi ./charts/logjedi -n logjedi --create-namespace \
   --set operatorConfig.logBackendType=loki \
   --set operatorConfig.logBackendURL=https://loki.example.com/query \
   --set operatorConfig.applyMode=manual
 
 # LLM service: use existing secret or create from value (dev only)
-helm install logsage ./charts/logsage -n logsage --create-namespace \
-  --set llmService.existingSecret=logsage-llm-openai
+helm install logjedi ./charts/logjedi -n logjedi --create-namespace \
+  --set llmService.existingSecret=logjedi-llm-openai
 # Or create secret from chart: --set llmService.createSecret=true --set llmService.apiKey=sk-...
 ```
 
-**Key values (see `charts/logsage/values.yaml`):**
+**Key values (see `charts/logjedi/values.yaml`):**
 | Value | Description | Default |
 |-------|-------------|---------|
-| `namespace` | Namespace name (used when installing with `-n`) | `logsage` |
+| `namespace` | Namespace name (used when installing with `-n`) | `logjedi` |
 | `operatorConfig.applyMode` | `auto` or `manual` | `auto` |
 | `operatorConfig.logBackendType` | `kubernetes`, `loki`, or `custom_http` | `kubernetes` |
 | `operatorConfig.autoApplyNamespaces` | Comma-separated namespaces for auto-apply (empty = all) | `default` |
@@ -247,9 +247,9 @@ helm install logsage ./charts/logsage -n logsage --create-namespace \
 | `operatorConfig.analyzeCooldownMinutes` | Cooldown before re-analyzing same resource | `15` |
 | `operatorConfig.dryRunBeforeApply` | Server-side dry-run before applying patch | `false` |
 | `llmService.provider` | `mock`, `openai`, `bedrock`, or `gemini` | `openai` |
-| `llmService.existingSecret` | Secret name for LLM API key | `logsage-llm-openai` |
-| `operator.image.repository`, `.tag` | Operator image | `logsage-operator:latest` |
-| `llmService.image.repository`, `.tag` | LLM service image | `logsage-llm-service:latest` |
+| `llmService.existingSecret` | Secret name for LLM API key | `logjedi-llm-openai` |
+| `operator.image.repository`, `.tag` | Operator image | `logjedi-operator:latest` |
+| `llmService.image.repository`, `.tag` | LLM service image | `logjedi-llm-service:latest` |
 
 After install, create the API key secret if needed, then port-forward to the LLM service and open `/analyses` and `/reports` as in [Testing and validation](#testing-and-validation-full-flow).
 
@@ -257,17 +257,20 @@ After install, create the API key secret if needed, then port-forward to the LLM
 
 - `operator/` – Go controller (controller-runtime), `controllers/`, `internal/` (logbackend, llmclient, notifier, redact, patch), `config/deploy/`, `config/samples/`.
 - `llm-service/` – FastAPI app, Pydantic models, Strands analyzer, `llm_client`, `routers/`, `services/`, Dockerfile, `deploy/`, `.env.example`.
-- `charts/logsage/` – Helm chart for operator + LLM service with configurable values.
-- `docs/adr/` – Architecture decision records.
+- `charts/logjedi/` – Helm chart for operator + LLM service with configurable values.
+- `docs/adr/` – Architecture decision records; `docs/requirements.md`, `docs/security.md`, `docs/api-contract.md`, `docs/release.md` – requirements, security, API contract, and release process.
+- [CONTRIBUTING.md](CONTRIBUTING.md) – How to contribute, run tests, and submit PRs; [SECURITY.md](SECURITY.md) – vulnerability reporting; [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) – community guidelines; [LICENSE](LICENSE) – Apache-2.0; [CHANGELOG.md](CHANGELOG.md) – version history.
+- `.github/workflows/` – CI (build + test on push/PR), build-and-push (GHCR), release, golangci-lint, semantic PR, and GitHub Pages; `.github/dependabot.yml` – dependency updates; `.github/PULL_REQUEST_TEMPLATE.md` – PR checklist.
 - [RUNBOOK.md](RUNBOOK.md) – Operational runbook; [ROADMAP.md](ROADMAP.md) – current state and roadmap.
 
 ## Build and deploy
 
 - **Prerequisites:** Go 1.21+ for the operator. For the LLM service: **Python 3.14** and **[uv](https://docs.astral.sh/uv/)** (e.g. `brew install uv`). From `llm-service/`, run `uv sync` to install deps and `uv run uvicorn main:app --reload` for local dev.
 - `make build` – build operator binary and install llm-service Python deps via `uv sync`.
-- `make docker-build` – build both Docker images (`logsage-operator:latest`, `logsage-llm-service:latest`).
+- `make docker-build` – build both Docker images (`logjedi-operator:latest`, `logjedi-llm-service:latest`).
+- **GitHub Container Registry:** On push to `main`, the "Build and push images" workflow builds both images and pushes them to GHCR. Each image is tagged with a **date-time** (UTC, `YYYYMMDD-HHMMSS`) and `latest`. Pull with `docker pull ghcr.io/<owner>/logjedi-operator:<tag>` and `ghcr.io/<owner>/logjedi-llm-service:<tag>` (use the workflow run or Packages page for the exact tag).
 - `make deploy` – apply `operator/config/deploy/` and `llm-service/deploy/`.
-- `make test` – run operator tests (go vet, go test) and llm-service tests (pytest if available).
+- `make test` – run operator tests (go vet, go test) and llm-service tests (pytest; use `uv sync --extra dev` in llm-service for test deps).
 - `make dev` – build and docker-build; prints instructions for cluster, deploy, and (for kind) loading images.
 - `make build-operator`, `make docker-build-operator`, `make deploy-operator` – operator only.
 
