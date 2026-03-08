@@ -2,13 +2,33 @@
 
 ![K8s LogJedi](images/k8s_jedi.png)
 
-**May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
+[![code size](https://img.shields.io/github/languages/code-size/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi)
+[![build](https://img.shields.io/github/actions/workflow/status/adefemi171/k8s.LogJedi/ci.yml?branch=main&label=build)](https://github.com/adefemi171/k8s.LogJedi/actions)
+[![release](https://img.shields.io/github/v/release/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi/releases)
+[![docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://adefemi171.github.io/k8s.LogJedi/)
+[![License](https://img.shields.io/github/license/adefemi171/k8s.LogJedi)](LICENSE)
+[![Go](https://img.shields.io/github/go-mod/go-version/adefemi171/k8s.LogJedi?directory=operator&label=Go)](https://go.dev/)
+[![last commit](https://img.shields.io/github/last-commit/adefemi171/k8s.LogJedi)](https://github.com/adefemi171/k8s.LogJedi/commits/main)
 
-[**GitHub**](https://github.com/adefemi171/k8s.LogJedi)
+**May the logs be with you.** Your AI SRE Jedi that reads failures, writes fixes.
 
 An AI-native Kubernetes sidekick that watches your pods, reads the logs, and turns failures into clear fixes—before they become outages. A production-ready operator that detects failed workloads, collects logs and events, and talks to a Python FastAPI + Strands LLM service for analysis and optional remediation (Slack/Teams notification, auto or manual apply).
 
 **Current features:** Multi-LLM support (mock, OpenAI, Bedrock, Gemini) with `.env` loading; health/ready and OpenAPI; per-resource cooldown and dry-run before apply; log and namespace filters; operator–LLM auth; audit logging; secret redaction; resource limits; runbook and ADRs. See [ROADMAP.md](ROADMAP.md) for the full list and planned work.
+
+## Table of contents
+
+- [Architecture](#architecture)
+- [Quickstart with kind/minikube](#quickstart-with-kindminikube)
+- [Testing and validation (full flow)](#testing-and-validation-full-flow)
+- [Config options](#config-options)
+- [Runbook](#runbook)
+- [Architecture decisions](#architecture-decisions)
+- [Helm chart](#helm-chart)
+- [Repository layout](#repository-layout)
+- [Build and deploy](#build-and-deploy)
+- [LLM service API](#llm-service-api)
+- [Log backend (HTTP / Loki)](#log-backend-http--loki)
 
 ## Architecture
 
