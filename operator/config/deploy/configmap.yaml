@@ -10,6 +10,10 @@ data:
   HISTORICAL_LOG_SINCE_MINUTES: "60"
   ANALYZE_COOLDOWN_MINUTES: "15"
   DRY_RUN_BEFORE_APPLY: "false"
+  # Optional: include node conditions + node events for scheduled pods in the LLM request
+  # INCLUDE_NODE_EVENTS: "false"
+  # MAX_NODE_EVENTS: "25"          # cap node events per node (0 = no cap)
+  # MAX_NODE_CONTEXT_NODES: "3"    # max unique nodes to include in one request (0 = no cap)
   # Only auto-apply in these namespaces (empty = all). Set to exclude logjedi so we never patch the operator or LLM service.
   AUTO_APPLY_NAMESPACES: "default"
   # Optional: WATCH_NAMESPACES, EXCLUDE_NAMESPACES (comma-separated)

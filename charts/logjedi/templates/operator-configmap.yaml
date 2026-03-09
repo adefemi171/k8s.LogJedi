@@ -13,22 +13,25 @@ data:
   HISTORICAL_LOG_SINCE_MINUTES: {{ .Values.operatorConfig.historicalLogSinceMinutes | quote }}
   ANALYZE_COOLDOWN_MINUTES: {{ .Values.operatorConfig.analyzeCooldownMinutes | quote }}
   DRY_RUN_BEFORE_APPLY: {{ .Values.operatorConfig.dryRunBeforeApply | quote }}
+  INCLUDE_NODE_EVENTS: {{ .Values.operatorConfig.includeNodeEvents | quote }}
+  MAX_NODE_EVENTS: {{ .Values.operatorConfig.maxNodeEvents | quote }}
+  MAX_NODE_CONTEXT_NODES: {{ .Values.operatorConfig.maxNodeContextNodes | quote }}
   AUTO_APPLY_NAMESPACES: {{ .Values.operatorConfig.autoApplyNamespaces | quote }}
-  {{- if .Values.operatorConfig.logBackendURL }}
+  # {{- if .Values.operatorConfig.logBackendURL }}
   LOG_BACKEND_URL: {{ .Values.operatorConfig.logBackendURL | quote }}
-  {{- end }}
-  {{- if .Values.operatorConfig.watchNamespaces }}
+  # {{- end }}
+  # {{- if .Values.operatorConfig.watchNamespaces }}
   WATCH_NAMESPACES: {{ .Values.operatorConfig.watchNamespaces | quote }}
-  {{- end }}
-  {{- if .Values.operatorConfig.excludeNamespaces }}
+  # {{- end }}
+  # {{- if .Values.operatorConfig.excludeNamespaces }}
   EXCLUDE_NAMESPACES: {{ .Values.operatorConfig.excludeNamespaces | quote }}
-  {{- end }}
-  {{- if ne .Values.operatorConfig.maxRecentLogLines "0" }}
+  # {{- end }}
+  # {{- if ne .Values.operatorConfig.maxRecentLogLines "0" }}
   MAX_RECENT_LOG_LINES: {{ .Values.operatorConfig.maxRecentLogLines | quote }}
-  {{- end }}
-  {{- if ne .Values.operatorConfig.maxHistoricalLogLines "0" }}
+  # {{- end }}
+  # {{- if ne .Values.operatorConfig.maxHistoricalLogLines "0" }}
   MAX_HISTORICAL_LOG_LINES: {{ .Values.operatorConfig.maxHistoricalLogLines | quote }}
-  {{- end }}
-  {{- if .Values.operatorConfig.llmServiceAuthHeader }}
+  # {{- end }}
+  # {{- if .Values.operatorConfig.llmServiceAuthHeader }}
   LLM_SERVICE_AUTH_HEADER: {{ .Values.operatorConfig.llmServiceAuthHeader | quote }}
-  {{- end }}
+  # {{- end }}

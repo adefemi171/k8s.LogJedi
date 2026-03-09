@@ -57,6 +57,20 @@ def _build_prompt(req: AnalyzeRequest) -> str:
     ]
     for e in req.events:
         lines.append(f"  [{e.type}] {e.reason}: {e.message}")
+    if req.nodes:
+        lines.append("")
+        lines.append("--- Node context (optional) ---")
+        for n in req.nodes[:5]:
+            lines.append(f"Node: {n.name}")
+            if n.conditions:
+                lines.append("  Conditions:")
+                for c in n.conditions[:20]:
+                    msg = f" ({c.reason})" if c.reason else ""
+                    lines.append(f"    - {c.type}={c.status}{msg}")
+            if n.events:
+                lines.append("  Events:")
+                for e in n.events[:25]:
+                    lines.append(f"    - [{e.type}] {e.reason}: {e.message}")
     lines.append("")
     lines.append("--- Spec (snippet) ---")
     lines.append(json.dumps(req.spec, indent=2)[:4000])

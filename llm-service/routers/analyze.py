@@ -140,6 +140,7 @@ def _log_request_response(req: AnalyzeRequest, resp: AnalyzeResponse) -> None:
                 "namespace": req.namespace,
                 "reason": req.reason,
                 "events_count": len(req.events),
+                "nodes_count": len(req.nodes or []),
                 "spec": _redact_spec(req.spec),
                 "recent_logs_lines": len(req.recent_logs or []),
                 "historical_logs_lines": len(req.historical_logs or []),

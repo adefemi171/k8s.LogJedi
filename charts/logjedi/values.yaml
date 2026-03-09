@@ -8,7 +8,7 @@ namespace: logjedi
 # --- Operator ---
 operator:
   image:
-    repository: logjedi-operator
+    repository: ghcr.io/adefemi171/logjedi-operator
     tag: latest
     pullPolicy: IfNotPresent
   replicaCount: 1
@@ -31,6 +31,12 @@ operatorConfig:
   historicalLogSinceMinutes: "60"
   analyzeCooldownMinutes: "15"
   dryRunBeforeApply: "false"
+  # Optional: include node conditions + node events for scheduled pods in the LLM request
+  includeNodeEvents: "false"
+  # Cap node events per node (0 = no cap)
+  maxNodeEvents: "25"
+  # Max unique nodes to include in one analysis request (0 = no cap)
+  maxNodeContextNodes: "3"
   # Comma-separated; only auto-apply in these namespaces (empty = all). Set e.g. "default" to avoid patching logjedi.
   autoApplyNamespaces: "default"
   watchNamespaces: ""
@@ -44,7 +50,7 @@ operatorConfig:
 llmService:
   enabled: true
   image:
-    repository: logjedi-llm-service
+    repository: ghcr.io/adefemi171/logjedi-llm-service
     tag: latest
     pullPolicy: IfNotPresent
   replicaCount: 1

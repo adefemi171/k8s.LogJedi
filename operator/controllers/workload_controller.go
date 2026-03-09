@@ -6,20 +6,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	coretyped "k8s.io/client-go/kubernetes/typed/core/v1"
-	"github.com/go-logr/logr"
 
 	"github.com/adefemi171/k8s.LogJedi/operator/internal/config"
-	"github.com/adefemi171/k8s.LogJedi/operator/internal/logbackend"
 	"github.com/adefemi171/k8s.LogJedi/operator/internal/llmclient"
+	"github.com/adefemi171/k8s.LogJedi/operator/internal/logbackend"
 	"github.com/adefemi171/k8s.LogJedi/operator/internal/notifier"
 	"github.com/adefemi171/k8s.LogJedi/operator/internal/patch"
 	"github.com/adefemi171/k8s.LogJedi/operator/internal/redact"
@@ -64,12 +65,12 @@ func SetupWorkloadReconciler(mgr manager.Manager, cfg *config.Config) error {
 	}
 
 	r := &WorkloadReconciler{
-		Client:       mgr.GetClient(),
-		Config:       cfg,
-		CoreV1:       coreV1,
-		LLMClient:    llm,
-		LogBackend:   lb,
-		Notifiers:    notifiers,
+		Client:        mgr.GetClient(),
+		Config:        cfg,
+		CoreV1:        coreV1,
+		LLMClient:     llm,
+		LogBackend:    lb,
+		Notifiers:     notifiers,
 		cooldownCache: &cooldownCache{m: make(map[string]time.Time)},
 	}
 	return ctrl.NewControllerManagedBy(mgr).
@@ -233,12 +234,14 @@ func (r *WorkloadReconciler) reconcilePod(ctx context.Context, pod *corev1.Pod, 
 		}
 	}
 	recentLogs = truncateLogs(recentLogs, r.Config.MaxRecentLogLines)
+	nodes := r.collectNodeContexts(ctx, []string{pod.Spec.NodeName})
 	llmReq := &llmclient.AnalyzeRequest{
-		ResourceKind:    "Pod",
-		ResourceName:    pod.Name,
+		ResourceKind:   "Pod",
+		ResourceName:   pod.Name,
 		Namespace:      pod.Namespace,
 		Reason:         reason,
 		Events:         eventsToItems(events),
+		Nodes:          nodes,
 		Spec:           specRedacted,
 		RecentLogs:     stringsOrEmpty(recentLogs),
 		HistoricalLogs: stringsOrEmpty(historicalLogs),
@@ -278,11 +281,15 @@ func (r *WorkloadReconciler) reconcileDeployment(ctx context.Context, dep *appsv
 	}
 
 	var recentLogs, historicalLogs []string
+	nodeNames := make([]string, 0, 5)
 	for i := range podList.Items {
 		if i >= 5 {
 			break
 		}
 		p := &podList.Items[i]
+		if p.Spec.NodeName != "" {
+			nodeNames = append(nodeNames, p.Spec.NodeName)
+		}
 		logs, _ := r.getPodLogs(ctx, p.Namespace, p.Name, r.Config.LogTailLines, nil)
 		recentLogs = append(recentLogs, fmt.Sprintf("--- pod/%s ---", p.Name))
 		recentLogs = append(recentLogs, logs...)
@@ -294,6 +301,7 @@ func (r *WorkloadReconciler) reconcileDeployment(ctx context.Context, dep *appsv
 		}
 	}
 	recentLogs = truncateLogs(recentLogs, r.Config.MaxRecentLogLines)
+	nodes := r.collectNodeContexts(ctx, nodeNames)
 
 	specRedacted, err := redact.RedactSpec(dep.Spec)
 	if err != nil {
@@ -301,11 +309,12 @@ func (r *WorkloadReconciler) reconcileDeployment(ctx context.Context, dep *appsv
 	}
 
 	llmReq := &llmclient.AnalyzeRequest{
-		ResourceKind:    "Deployment",
-		ResourceName:    dep.Name,
+		ResourceKind:   "Deployment",
+		ResourceName:   dep.Name,
 		Namespace:      dep.Namespace,
 		Reason:         reason,
 		Events:         eventsToItems(events),
+		Nodes:          nodes,
 		Spec:           specRedacted,
 		RecentLogs:     stringsOrEmpty(recentLogs),
 		HistoricalLogs: stringsOrEmpty(historicalLogs),
@@ -345,11 +354,15 @@ func (r *WorkloadReconciler) reconcileJob(ctx context.Context, job *batchv1.Job,
 	}
 
 	var recentLogs, historicalLogs []string
+	nodeNames := make([]string, 0, 5)
 	for i := range podList.Items {
 		if i >= 5 {
 			break
 		}
 		p := &podList.Items[i]
+		if p.Spec.NodeName != "" {
+			nodeNames = append(nodeNames, p.Spec.NodeName)
+		}
 		logs, _ := r.getPodLogs(ctx, p.Namespace, p.Name, r.Config.LogTailLines, nil)
 		recentLogs = append(recentLogs, fmt.Sprintf("--- pod/%s ---", p.Name))
 		recentLogs = append(recentLogs, logs...)
@@ -361,6 +374,7 @@ func (r *WorkloadReconciler) reconcileJob(ctx context.Context, job *batchv1.Job,
 		}
 	}
 	recentLogs = truncateLogs(recentLogs, r.Config.MaxRecentLogLines)
+	nodes := r.collectNodeContexts(ctx, nodeNames)
 
 	specRedacted, err := redact.RedactSpec(job.Spec)
 	if err != nil {
@@ -368,11 +382,12 @@ func (r *WorkloadReconciler) reconcileJob(ctx context.Context, job *batchv1.Job,
 	}
 
 	llmReq := &llmclient.AnalyzeRequest{
-		ResourceKind:    "Job",
-		ResourceName:    job.Name,
+		ResourceKind:   "Job",
+		ResourceName:   job.Name,
 		Namespace:      job.Namespace,
 		Reason:         reason,
 		Events:         eventsToItems(events),
+		Nodes:          nodes,
 		Spec:           specRedacted,
 		RecentLogs:     stringsOrEmpty(recentLogs),
 		HistoricalLogs: stringsOrEmpty(historicalLogs),
@@ -507,6 +522,88 @@ func (r *WorkloadReconciler) collectEvents(ctx context.Context, namespace, name,
 		return nil, err
 	}
 	// Optionally filter by UID for precision
+	out := make([]corev1.Event, 0, len(list.Items))
+	for i := range list.Items {
+		if list.Items[i].InvolvedObject.UID == types.UID(uid) {
+			out = append(out, list.Items[i])
+		}
+	}
+	if len(out) == 0 {
+		out = list.Items
+	}
+	return out, nil
+}
+
+func (r *WorkloadReconciler) collectNodeContexts(ctx context.Context, nodeNames []string) []llmclient.NodeContext {
+	if !r.Config.IncludeNodeEvents {
+		return nil
+	}
+	if len(nodeNames) == 0 {
+		return nil
+	}
+	seen := make(map[string]struct{}, len(nodeNames))
+	deduped := make([]string, 0, len(nodeNames))
+	for _, n := range nodeNames {
+		n = strings.TrimSpace(n)
+		if n == "" {
+			continue
+		}
+		if _, ok := seen[n]; ok {
+			continue
+		}
+		seen[n] = struct{}{}
+		deduped = append(deduped, n)
+	}
+	if len(deduped) == 0 {
+		return nil
+	}
+	if max := r.Config.MaxNodeContextNodes; max > 0 && len(deduped) > max {
+		deduped = deduped[:max]
+	}
+
+	out := make([]llmclient.NodeContext, 0, len(deduped))
+	for _, nodeName := range deduped {
+		nc := llmclient.NodeContext{Name: nodeName}
+
+		node, err := r.CoreV1.Nodes().Get(ctx, nodeName, metav1.GetOptions{})
+		nodeUID := ""
+		if err == nil && node != nil {
+			nodeUID = string(node.UID)
+			for _, c := range node.Status.Conditions {
+				nc.Conditions = append(nc.Conditions, llmclient.NodeConditionItem{
+					Type:               string(c.Type),
+					Status:             string(c.Status),
+					Reason:             c.Reason,
+					Message:            c.Message,
+					LastTransitionTime: formatTime(c.LastTransitionTime),
+				})
+			}
+		}
+
+		if evs, err := r.collectNodeEvents(ctx, nodeName, nodeUID); err == nil {
+			if max := r.Config.MaxNodeEvents; max > 0 && len(evs) > max {
+				evs = evs[:max]
+			}
+			nc.Events = eventsToItems(evs)
+		}
+
+		out = append(out, nc)
+	}
+	return out
+}
+
+func (r *WorkloadReconciler) collectNodeEvents(ctx context.Context, nodeName, uid string) ([]corev1.Event, error) {
+	// Events are namespaced objects; for cluster-scoped involvedObjects (like Node),
+	// list across all namespaces and filter by involvedObject.kind/name (and UID when available).
+	list, err := r.CoreV1.Events(metav1.NamespaceAll).List(ctx, metav1.ListOptions{
+		FieldSelector: "involvedObject.kind=Node,involvedObject.name=" + nodeName,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if uid == "" {
+		return list.Items, nil
+	}
 	out := make([]corev1.Event, 0, len(list.Items))
 	for i := range list.Items {
 		if list.Items[i].InvolvedObject.UID == types.UID(uid) {

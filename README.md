@@ -207,6 +207,9 @@ Instead of raw manifests, you can install with Helm for parameterized config (na
 | `DRY_RUN_BEFORE_APPLY` (operator) | If true, server-side dry-run before applying patch | false |
 | `MAX_RECENT_LOG_LINES` (operator) | Cap recent_logs sent to LLM (0 = no cap) | 0 |
 | `MAX_HISTORICAL_LOG_LINES` (operator) | Cap historical_logs (0 = no cap) | 0 |
+| `INCLUDE_NODE_EVENTS` (operator) | If true, include node conditions + node events (for scheduled pods) in the LLM request | false |
+| `MAX_NODE_EVENTS` (operator) | Cap node events per node (0 = no cap) | 25 |
+| `MAX_NODE_CONTEXT_NODES` (operator) | Max unique nodes to include in one request (0 = no cap) | 3 |
 | `WATCH_NAMESPACES` (operator) | Comma-separated namespaces to watch (empty = all) | - |
 | `EXCLUDE_NAMESPACES` (operator) | Comma-separated namespaces to exclude | - |
 | `AUTO_APPLY_NAMESPACES` (operator) | When auto, only apply in these namespaces (empty = all) | - |

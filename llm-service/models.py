@@ -15,6 +15,24 @@ class EventItem(BaseModel):
     lastTimestamp: Optional[str] = None
 
 
+class NodeConditionItem(BaseModel):
+    """Node condition snapshot."""
+
+    type: str = Field(..., description="e.g. Ready, MemoryPressure, DiskPressure")
+    status: str = Field(..., description="True, False, or Unknown")
+    reason: str = ""
+    message: str = ""
+    lastTransitionTime: Optional[str] = None
+
+
+class NodeContext(BaseModel):
+    """Optional node context included by the operator."""
+
+    name: str
+    conditions: list[NodeConditionItem] = Field(default_factory=list)
+    events: list[EventItem] = Field(default_factory=list)
+
+
 class AnalyzeRequest(BaseModel):
     """Request body for POST /analyze."""
 
@@ -23,6 +41,7 @@ class AnalyzeRequest(BaseModel):
     namespace: str = ""
     reason: str = ""
     events: list[EventItem] = Field(default_factory=list)
+    nodes: list[NodeContext] = Field(default_factory=list)
     spec: dict[str, Any] = Field(default_factory=dict)
     recent_logs: list[str] = Field(default_factory=list, alias="recent_logs")
     historical_logs: list[str] = Field(default_factory=list, alias="historical_logs")
@@ -35,7 +54,7 @@ class AnalyzeRequest(BaseModel):
         """Accept null for list fields from Go (nil slices serialize as null) and coerce to []."""
         if not isinstance(data, dict):
             return data
-        for key in ("recent_logs", "historical_logs", "events"):
+        for key in ("recent_logs", "historical_logs", "events", "nodes"):
             if key in data and data[key] is None:
                 data[key] = []
         return data
