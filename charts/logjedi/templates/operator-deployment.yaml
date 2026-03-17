@@ -31,9 +31,8 @@ spec:
       containers:
         - name: operator
           image: "{{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}"
-          imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
-          resources:
-            {{- toYaml .Values.operator.resources | nindent 12 }}
+          imagePullPolicy: "{{ .Values.operator.image.pullPolicy }}"
+          resources: {{ toJson .Values.operator.resources }} # yamllint disable-line
           envFrom:
             - configMapRef:
                 name: logjedi-operator-config

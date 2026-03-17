@@ -1,12 +1,12 @@
-{{- if .Values.llmService.enabled }}
+# {{- if .Values.llmService.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: llm-service
-  namespace: {{ .Release.Namespace }}
+  namespace: "{{ .Release.Namespace }}"
   labels:
     app.kubernetes.io/name: llm-service
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
 spec:
   selector:
     app: llm-service
@@ -18,12 +18,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: llm-service
-  namespace: {{ .Release.Namespace }}
+  namespace: "{{ .Release.Namespace }}"
   labels:
     app.kubernetes.io/name: llm-service
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
 spec:
-  replicas: {{ .Values.llmService.replicaCount }}
+  replicas: "{{ .Values.llmService.replicaCount }}"
   selector:
     matchLabels:
       app: llm-service
@@ -32,30 +32,29 @@ spec:
       labels:
         app: llm-service
         app.kubernetes.io/name: llm-service
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/instance: "{{ .Release.Name }}"
     spec:
       containers:
         - name: llm-service
           image: "{{ .Values.llmService.image.repository }}:{{ .Values.llmService.image.tag }}"
-          imagePullPolicy: {{ .Values.llmService.image.pullPolicy }}
+          imagePullPolicy: "{{ .Values.llmService.image.pullPolicy }}"
           ports:
             - containerPort: 8000
-          resources:
-            {{- toYaml .Values.llmService.resources | nindent 12 }}
+          resources: {{ toJson .Values.llmService.resources }}
           env:
             - name: LLM_PROVIDER
-              value: {{ .Values.llmService.provider | quote }}
-            {{- if .Values.llmService.existingSecret }}
+              value: "{{ .Values.llmService.provider }}"
+            # {{- if .Values.llmService.existingSecret }}
             - name: LLM_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.llmService.existingSecret }}
-                  key: {{ .Values.llmService.existingSecretKey }}
-            {{- else if .Values.llmService.createSecret }}
+                  name: "{{ .Values.llmService.existingSecret }}"
+                  key: "{{ .Values.llmService.existingSecretKey }}"
+            # {{- else if .Values.llmService.createSecret }}
             - name: LLM_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: logjedi-llm-openai
                   key: LLM_API_KEY
-            {{- end }}
-{{- end }}
+            # {{- end }}
+# {{- end }}
