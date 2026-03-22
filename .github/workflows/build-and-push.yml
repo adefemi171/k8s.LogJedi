@@ -65,7 +65,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Build and push operator
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./operator
           file: ./operator/Dockerfile
@@ -78,7 +78,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=logjedi-operator
 
       - name: Build and push LLM service
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./llm-service
           file: ./llm-service/Dockerfile
