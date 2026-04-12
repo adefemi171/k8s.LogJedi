@@ -7,7 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.109.0",
     "uvicorn[standard]>=0.27.0",
-    "pydantic>=2.5.0",
+    "pydantic>=2.12.5",
     "python-dotenv>=1.0.0",
     "strands-agents>=1.0.0",
 ]
