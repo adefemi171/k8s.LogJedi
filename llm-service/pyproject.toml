@@ -5,7 +5,7 @@ description = "k8s LogJedi LLM analysis service: May the logs be with you. Your 
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "fastapi>=0.109.0",
+    "fastapi>=0.135.3",
     "uvicorn[standard]>=0.27.0",
     "pydantic>=2.5.0",
     "python-dotenv>=1.0.0",
